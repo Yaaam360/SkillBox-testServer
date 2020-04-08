@@ -19,16 +19,12 @@ class ServerProtocol(asyncio.Protocol):
         decoded = data.decode(encoding="utf8", errors="replace")
 
         if self.login is not None:
-            if decoded.startswith("history"):
-               self.send_history()
-            else:
-                if (decoded != "\r\n"):
-                    self.send_message(decoded)
+            if (decoded != "\r\n"):
+                self.send_message(decoded)
         else:
             if decoded.startswith("login:"):
                 login = decoded.replace("login:", "").replace("\r", "")
                 login_used = self.check_login(login)
-                print(login_used)
                 if (login_used == True):
                     self.transport.write(f"Логин {login} занят, попробуйте другой\n".encode())
                     self.transport.close()
