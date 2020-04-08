@@ -25,8 +25,8 @@ class ServerProtocol(asyncio.Protocol):
                 if (decoded != "\r\n"):
                     self.send_message(decoded)
         else:
-            if decoded.startswith("log"):
-                login = decoded.replace("log", "").replace("\r", "")
+            if decoded.startswith("login:"):
+                login = decoded.replace("login:", "").replace("\r", "")
                 login_used = self.check_login(login)
                 print(login_used)
                 if (login_used == True):
@@ -34,7 +34,7 @@ class ServerProtocol(asyncio.Protocol):
                     self.transport.close()
                 else:
                     self.login = login
-                    self.transport.write(f"Привет, {self.login}!\n\r".encode("utf8"))
+                    self.transport.write(f"Привет, {self.login}!\n\r".encode())
                     self.send_history()
             else:
                 self.transport.write('Неверный логин!\n\r'.encode())
@@ -64,7 +64,6 @@ class ServerProtocol(asyncio.Protocol):
 
     def send_history(self):
         history_count = len(self.server.histories)
-        print(history_count)
         if history_count <= 10:
             i=-(history_count)
         else:
